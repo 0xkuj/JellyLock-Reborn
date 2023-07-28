@@ -3,12 +3,9 @@
 #import <CepheiPrefs/HBAppearanceSettings.h>
 #import <Cephei/HBPreferences.h>
 #import <Cephei/HBRespringController.h>
-
-
 #import <spawn.h>
 
-@interface shortcutsListController : HBRootListController{
+@interface shortcutsListController : HBRootListController {
     UITableView * _table;
 }
-
 @end

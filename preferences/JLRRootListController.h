@@ -9,6 +9,7 @@
 @interface JLRRootListController : HBRootListController <MFMailComposeViewControllerDelegate> { 
     UITableView * _table;
 }
+
 @property (nonatomic, retain) UIView *headerView;
 @property (nonatomic, retain) UIImageView *headerImageView;
 @end

@@ -8,5 +8,4 @@
 @interface AppearanceListController : HBRootListController{
     UITableView * _table;
 }
-
 @end

@@ -3,12 +3,10 @@
 #import <CepheiPrefs/HBAppearanceSettings.h>
 #import <Cephei/HBPreferences.h>
 #import <Cephei/HBRespringController.h>
-#include "SparkAppListTableViewController.h"
-
 #import <spawn.h>
+#include "SparkAppListTableViewController.h"
 
 @interface AppShortcutsListController : HBRootListController{
     UITableView * _table;
 }
-
 @end
