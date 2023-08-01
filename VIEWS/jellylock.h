@@ -64,6 +64,7 @@ double rightshortcut;
 @property (nonatomic,retain) UIView *jellyApp6;
 @property (nonatomic,retain) UIView *jellyApp7;
 @property (nonatomic,retain) UIPanGestureRecognizer *MoveCircleGesture;
+@property (nonatomic, strong) NSMutableArray<UIView *> *jellyApps;
 @end
 
 @interface SBUIFlashlightController : NSObject

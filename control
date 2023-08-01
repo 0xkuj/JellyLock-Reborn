@@ -3,7 +3,7 @@ Name: JellyLock Reborn
 Depends: mobilesubstrate, ws.hbang.common,preferenceloader, ws.hbang.alderis (>= 1.1), com.spark.libsparkapplist
 Version: 2.0
 Architecture: iphoneos-arm
-Description: A beautifully simple lockscreen application launcher for iOS 14.
+Description: A beautifully simple lockscreen application launcher.
 Maintainer: MegaDev
 Author: MegaDev
 Section: Tweaks

@@ -2,8 +2,6 @@ INSTALL_TARGET_PROCESSES = SpringBoard
 TARGET = iphone:14.5:14.5
 ARCHS = arm64 arm64e
 export GO_EASY_ON_ME = 1
-export THEOS_DEVICE_PORT=22
-export THEOS_DEVICE_IP=192.168.0.202
 
 include $(THEOS)/makefiles/common.mk
 
