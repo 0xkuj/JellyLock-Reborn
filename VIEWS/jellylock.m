@@ -4,9 +4,10 @@
 
 @implementation JellylockView
 float origPos = 10;
-int currentlySelected = 0;
+int currentlySelected = -1;
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
+    //jelly apps should be a dict. key: self.app value: the view itself. should save us ton of code
     self.app1 = [[NSString alloc] init];
     self.app2 = [[NSString alloc] init];
     self.app3 = [[NSString alloc] init];
@@ -169,6 +170,35 @@ int currentlySelected = 0;
     ]];
 }
 
+- (void)updateJellyAppLayersExceptIndex:(NSUInteger)index {
+    UIColor *color = [UIColor colorWithWhite:1.0f alpha:0.0f];
+    for (NSUInteger i = 0; i < self.jellyApps.count; i++) {
+        if (i == index) {
+            continue;
+        }
+        self.jellyApps[i].layer.borderColor = color.CGColor;
+        self.jellyApps[i].layer.shadowColor = color.CGColor;
+    }
+}
+
+- (void)updateJellyAppLayerView:(UIView *)view withBorderColor:(UIColor *)borderColor borderWidth:(CGFloat)borderWidth shadowColor:(UIColor *)shadowColor shadowOffset:(CGSize)shadowOffset shadowRadius:(CGFloat)shadowRadius shadowOpacity:(CGFloat)shadowOpacity {
+    view.layer.borderColor = borderColor.CGColor;
+    view.layer.borderWidth = borderWidth;
+    view.layer.shadowColor = shadowColor.CGColor;
+    view.layer.shadowOffset = shadowOffset;
+    view.layer.shadowRadius = shadowRadius;
+    view.layer.shadowOpacity = shadowOpacity;
+}
+
+- (void)resetJellyAppsCornerRadiusExceptIndex:(NSUInteger)index {
+    for (NSUInteger i = 0; i < self.jellyApps.count; i++) {
+        if (i == index) {
+            continue;
+        }
+        self.jellyApps[i].layer.cornerRadius = 0;
+    }
+}
+
 - (void)movedCircle:(UIPanGestureRecognizer*)recognizer {
     UIColor *draggercolour = [self colorWithHexString:draggerColor alpha:1];
     if(self.jellycontainer.hidden == YES){
@@ -208,302 +238,63 @@ int currentlySelected = 0;
         CGPoint adaptDistanceToCircleFromApp = CGPointMake(self.returnJelly.center.x+70, self.returnJelly.center.y);
         if (CGRectContainsPoint(Circle.frame, adaptDistanceToCircleFromApp)) {
             Circle.hidden = NO;
-            currentlySelected = 0;
-            self.jellyApps[0].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[0].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[1].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[1].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[2].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[2].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[3].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[3].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[4].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[4].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[5].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[5].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[6].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[6].layer.shadowColor = [UIColor clearColor].CGColor;
+            currentlySelected = -1;
+            [self updateJellyAppLayersExceptIndex:-1];
         }
         
-        if (CGRectIntersectsRect(stam,self.jellyApps[0].frame)) {
-            self.jellyApps[1].layer.cornerRadius = 0;
-            self.jellyApps[2].layer.cornerRadius = 0;
-            self.jellyApps[3].layer.cornerRadius = 0;
-            self.jellyApps[4].layer.cornerRadius = 0;
-            self.jellyApps[5].layer.cornerRadius = 26;
-            if (currentlySelected != 1) {
-                currentlySelected = 1;
-                self.jellyApps[0].layer.cornerRadius = 26;
-                AudioServicesPlaySystemSound(1520);
+        for (NSUInteger i = 0; i < self.jellyApps.count; i++) {
+            if (CGRectIntersectsRect(stam,self.jellyApps[i].frame)) {
+                [self resetJellyAppsCornerRadiusExceptIndex:i];
+                if (currentlySelected != i) {
+                    currentlySelected = i;
+                    self.jellyApps[i].layer.cornerRadius = 26;
+                    AudioServicesPlaySystemSound(1520);
+                }
+                Circle.hidden = YES;
+                [self updateJellyAppLayersExceptIndex:i];
+                [self updateJellyAppLayerView:self.jellyApps[i] withBorderColor:draggercolour borderWidth:2.5f shadowColor:draggercolour shadowOffset:CGSizeZero shadowRadius:10.0 shadowOpacity:1.0];
             }
-            Circle.hidden = YES;
-            
-            self.jellyApps[1].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[1].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[2].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[2].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[3].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[3].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[4].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[4].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[5].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[5].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[6].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[6].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[0].layer.borderColor = draggercolour.CGColor;
-            self.jellyApps[0].layer.borderWidth = 2.5f; //make border 1px thick
-            self.jellyApps[0].layer.shadowColor = draggercolour.CGColor;
-            self.jellyApps[0].layer.shadowOffset = CGSizeZero;
-            self.jellyApps[0].layer.shadowRadius = 10.0;
-            self.jellyApps[0].layer.shadowOpacity = 1.0;
-        }
-        
-        if (CGRectIntersectsRect(stam,self.jellyApps[1].frame))
-        {
-            self.jellyApps[0].layer.cornerRadius = 0;
-            self.jellyApps[2].layer.cornerRadius = 0;
-            self.jellyApps[3].layer.cornerRadius = 0;
-            self.jellyApps[4].layer.cornerRadius = 0;
-            self.jellyApps[5].layer.cornerRadius = 26;
-            if(currentlySelected != 2){
-                currentlySelected = 2;
-                self.jellyApps[1].layer.cornerRadius = 26;
-                AudioServicesPlaySystemSound(1520);
-            }
-            
-            Circle.hidden = YES;
-            self.jellyApps[0].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[0].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[2].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[2].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[3].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[3].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[4].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[4].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[5].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[5].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[6].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[6].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[1].layer.borderColor = draggercolour.CGColor;
-            self.jellyApps[1].layer.borderWidth = 2.5f; //make border 1px thick
-            self.jellyApps[1].layer.shadowColor = draggercolour.CGColor;
-            self.jellyApps[1].layer.shadowOffset = CGSizeZero;
-            self.jellyApps[1].layer.shadowRadius = 10.0;
-            self.jellyApps[1].layer.shadowOpacity = 1.0;
-        }
-        
-        if (CGRectIntersectsRect(stam,self.jellyApps[2].frame)) {
-            self.jellyApps[0].layer.cornerRadius = 0;
-            self.jellyApps[1].layer.cornerRadius = 0;
-            self.jellyApps[3].layer.cornerRadius = 0;
-            self.jellyApps[4].layer.cornerRadius = 0;
-            self.jellyApps[5].layer.cornerRadius = 26;
-            
-            if (currentlySelected != 3) {
-                currentlySelected = 3;
-                self.jellyApps[2].layer.cornerRadius = 26;
-                AudioServicesPlaySystemSound(1520);
-            }
-            Circle.hidden = YES;
-            
-            self.jellyApps[0].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[0].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[1].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[1].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[3].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[3].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[4].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[4].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[5].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[5].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[6].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[6].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[2].layer.borderColor = draggercolour.CGColor;
-            self.jellyApps[2].layer.borderWidth = 2.5f; //make border 1px thick
-            self.jellyApps[2].layer.shadowColor = draggercolour.CGColor;
-            self.jellyApps[2].layer.shadowOffset = CGSizeZero;
-            self.jellyApps[2].layer.shadowRadius = 100.0;
-            self.jellyApps[2].layer.shadowOpacity = 1.0;
-        }
-        
-        if (CGRectIntersectsRect(stam,self.jellyApps[3].frame)) {
-            self.jellyApps[0].layer.cornerRadius = 0;
-            self.jellyApps[1].layer.cornerRadius = 0;
-            self.jellyApps[2].layer.cornerRadius = 0;
-            self.jellyApps[4].layer.cornerRadius = 0;
-            self.jellyApps[5].layer.cornerRadius = 25;
-            
-            if (currentlySelected != 4) {
-                currentlySelected = 4;
-                self.jellyApps[3].layer.cornerRadius = 26;
-                AudioServicesPlaySystemSound(1520);
-            }
-            
-            self.jellyApps[0].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[0].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[1].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[1].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[2].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[2].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[4].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[4].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[6].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[6].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[5].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[5].layer.shadowColor = [UIColor clearColor].CGColor;
-            Circle.hidden = YES;
-            self.jellyApps[3].layer.borderColor = draggercolour.CGColor;
-            self.jellyApps[3].layer.borderWidth = 2.5f; //make border 1px thick
-            self.jellyApps[3].layer.shadowColor = draggercolour.CGColor;
-            self.jellyApps[3].layer.shadowOffset = CGSizeZero;
-            self.jellyApps[3].layer.shadowRadius = 100.0;
-            self.jellyApps[3].layer.shadowOpacity = 1.0;
-        }
-        
-        if (CGRectIntersectsRect(stam,self.jellyApps[4].frame)) {
-            
-            self.jellyApps[0].layer.cornerRadius = 0;
-            self.jellyApps[1].layer.cornerRadius = 0;
-            self.jellyApps[2].layer.cornerRadius = 0;
-            self.jellyApps[3].layer.cornerRadius = 0;
-            self.jellyApps[5].layer.cornerRadius = 26;
-            if (currentlySelected != 5) {
-                currentlySelected = 5;
-                self.jellyApps[4].layer.cornerRadius = 26;
-                AudioServicesPlaySystemSound(1520);
-            }
-            
-            self.jellyApps[0].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[0].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[1].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[1].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[2].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[2].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[3].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[3].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[5].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[5].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[6].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[6].layer.shadowColor = [UIColor clearColor].CGColor;
-            Circle.hidden = YES;
-            self.jellyApps[4].layer.borderColor = draggercolour.CGColor;
-            self.jellyApps[4].layer.borderWidth = 2.5f; //make border 1px thick
-            self.jellyApps[4].layer.shadowColor = draggercolour.CGColor;
-            self.jellyApps[4].layer.shadowOffset = CGSizeZero;
-            self.jellyApps[4].layer.shadowRadius = 100.0;
-            self.jellyApps[4].layer.shadowOpacity = 1.0;
-        }
-        
-        if (CGRectIntersectsRect(stam,self.jellyApps[5].frame)) {
-            self.jellyApps[0].layer.cornerRadius = 0;
-            self.jellyApps[1].layer.cornerRadius = 0;
-            self.jellyApps[2].layer.cornerRadius = 0;
-            self.jellyApps[3].layer.cornerRadius = 0;
-            self.jellyApps[4].layer.cornerRadius = 0;
-            if (currentlySelected != 6) {
-                currentlySelected = 6;
-                self.jellyApps[5].layer.cornerRadius = 26;
-                AudioServicesPlaySystemSound(1520);
-            }
-            
-            self.jellyApps[0].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[0].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[1].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[1].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[2].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[2].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[3].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[3].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[4].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[4].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[6].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[6].layer.shadowColor = [UIColor clearColor].CGColor;
-            Circle.hidden = YES;
-            self.jellyApps[5].layer.borderColor = draggercolour.CGColor;
-            self.jellyApps[5].layer.borderWidth = 2.5f; //make border 1px thick
-            self.jellyApps[5].layer.shadowColor = draggercolour.CGColor;
-            self.jellyApps[5].layer.shadowOffset = CGSizeZero;
-            self.jellyApps[5].layer.shadowRadius = 100.0;
-            self.jellyApps[5].layer.shadowOpacity = 1.0;
-        }
-        
-        if (CGRectIntersectsRect(stam,self.jellyApps[6].frame)) {
-            self.jellyApps[0].layer.cornerRadius = 0;
-            self.jellyApps[1].layer.cornerRadius = 0;
-            self.jellyApps[2].layer.cornerRadius = 0;
-            self.jellyApps[3].layer.cornerRadius = 0;
-            self.jellyApps[4].layer.cornerRadius = 0;
-            if(currentlySelected != 7){
-                currentlySelected = 7;
-                self.jellyApps[6].layer.cornerRadius = 26;
-                AudioServicesPlaySystemSound(1520);
-            }
-            
-            self.jellyApps[0].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[0].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[1].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[1].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[2].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[2].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[3].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[3].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[4].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[4].layer.shadowColor = [UIColor clearColor].CGColor;
-            self.jellyApps[5].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-            self.jellyApps[5].layer.shadowColor = [UIColor clearColor].CGColor;
-            Circle.hidden = YES;
-            self.jellyApps[6].layer.borderColor = draggercolour.CGColor;
-            self.jellyApps[6].layer.borderWidth = 2.5f; //make border 1px thick
-            self.jellyApps[6].layer.shadowColor = draggercolour.CGColor;
-            self.jellyApps[6].layer.shadowOffset = CGSizeZero;
-            self.jellyApps[6].layer.shadowRadius = 100.0;
-            self.jellyApps[6].layer.shadowOpacity = 1.0;
         }
     }
     
     if(recognizer.state == UIGestureRecognizerStateEnded){
         self.jellycontainer.hidden = YES;
         self.blurView.hidden = YES;
-        self.jellyApps[0].layer.cornerRadius = 0;
-        self.jellyApps[1].layer.cornerRadius = 0;
-        self.jellyApps[2].layer.cornerRadius = 0;
-        self.jellyApps[3].layer.cornerRadius = 0;
-        self.jellyApps[4].layer.cornerRadius = 0;
+        [self resetJellyAppsCornerRadiusExceptIndex:-1];
         self.jellyApps[5].layer.cornerRadius = 26;
         
         CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)showCSQuickactionsFromJelly, nil, nil, true);
-        if (currentlySelected == 1){
+        if (currentlySelected == 0) {
             [[UIApplication sharedApplication] launchApplicationWithIdentifier:self.app1 suspended:FALSE];
             CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)OpenAppFromJelly, nil, nil, true);
             openAppBundleid = self.app1;
-            
         }
         
-        if (currentlySelected == 2){
+        if (currentlySelected == 1) {
             [[UIApplication sharedApplication] launchApplicationWithIdentifier:self.app2 suspended:FALSE];
             CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)OpenAppFromJelly, nil, nil, true);
             openAppBundleid = self.app2;
         }
         
-        if (currentlySelected == 3){
+        if (currentlySelected == 2) {
             [[UIApplication sharedApplication] launchApplicationWithIdentifier:self.app3 suspended:FALSE];
             CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)OpenAppFromJelly, nil, nil, true);
             openAppBundleid = self.app3;
         }
         
-        if (currentlySelected == 4){
+        if (currentlySelected == 3) {
             [[UIApplication sharedApplication] launchApplicationWithIdentifier:self.app4 suspended:FALSE];
             CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)OpenAppFromJelly, nil, nil, true);
             openAppBundleid = self.app4;
         }
         
-        if (currentlySelected == 5){
+        if (currentlySelected == 4) {
             [[UIApplication sharedApplication] launchApplicationWithIdentifier:self.app5 suspended:FALSE];
             CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)OpenAppFromJelly, nil, nil, true);
             openAppBundleid = self.app5;
         }
         
-        if (currentlySelected == 6){
+        if (currentlySelected == 5) {
             switch ((int)leftshortcut) {
                 case 1:
                     if([[objc_getClass("SBUIFlashlightController") sharedInstance] level] == 0){
@@ -529,7 +320,7 @@ int currentlySelected = 0;
             }
         }
         
-        if (currentlySelected == 7) {
+        if (currentlySelected == 6) {
             switch ((int)rightshortcut) {
                 case 1:
                     if([[objc_getClass("SBUIFlashlightController") sharedInstance] level] == 0){
@@ -557,23 +348,9 @@ int currentlySelected = 0;
         
         self.jellyBackDrop.hidden = YES;
         self.bigCircle.hidden = YES;
-        currentlySelected = 0;
+        currentlySelected = -1;
         Circle.hidden = NO;
-        self.jellyApps[0].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-        self.jellyApps[0].layer.shadowColor = [UIColor clearColor].CGColor;
-        self.jellyApps[1].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-        self.jellyApps[1].layer.shadowColor = [UIColor clearColor].CGColor;
-        self.jellyApps[2].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-        self.jellyApps[2].layer.shadowColor = [UIColor clearColor].CGColor;
-        self.jellyApps[3].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-        self.jellyApps[3].layer.shadowColor = [UIColor clearColor].CGColor;
-        self.jellyApps[4].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-        self.jellyApps[4].layer.shadowColor = [UIColor clearColor].CGColor;
-        self.jellyApps[5].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-        self.jellyApps[5].layer.shadowColor = [UIColor clearColor].CGColor;
-        self.jellyApps[6].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-        self.jellyApps[6].layer.shadowColor = [UIColor clearColor].CGColor;
-        
+        [self updateJellyAppLayersExceptIndex:-1];
         [UIView animateWithDuration:0.1 delay:0 options:UIViewAnimationOptionCurveEaseOut
                          animations:^{
             self.Usercircle.center = CGPointMake(self.frame.size.width / 2,
@@ -591,23 +368,9 @@ int currentlySelected = 0;
     self.jellyBackDrop.hidden = YES;
     self.blurView.hidden = YES;
     self.bigCircle.hidden = YES;
-    currentlySelected = 0;
+    currentlySelected = -1;
     self.Usercircle.hidden = NO;
-    self.jellyApps[0].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-    self.jellyApps[0].layer.shadowColor = [UIColor clearColor].CGColor;
-    self.jellyApps[1].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-    self.jellyApps[1].layer.shadowColor = [UIColor clearColor].CGColor;
-    self.jellyApps[2].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-    self.jellyApps[2].layer.shadowColor = [UIColor clearColor].CGColor;
-    self.jellyApps[3].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-    self.jellyApps[3].layer.shadowColor = [UIColor clearColor].CGColor;
-    self.jellyApps[4].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-    self.jellyApps[4].layer.shadowColor = [UIColor clearColor].CGColor;
-    self.jellyApps[5].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-    self.jellyApps[5].layer.shadowColor = [UIColor clearColor].CGColor;
-    self.jellyApps[6].layer.borderColor = [UIColor colorWithWhite:1.0f alpha:0.0f].CGColor;
-    self.jellyApps[6].layer.shadowColor = [UIColor clearColor].CGColor;
-    
+    [self updateJellyAppLayersExceptIndex:-1];  
     [UIView animateWithDuration:0.1 delay:0 options:UIViewAnimationOptionCurveEaseOut
                      animations:^{
         self.Usercircle.center = CGPointMake(self.frame.size.width / 2,
@@ -618,12 +381,8 @@ int currentlySelected = 0;
 
 -(void)loadIcons {
     UIColor *draggercolour = [self colorWithHexString:draggerColor alpha:1];
-    self.Usercircle.layer.borderColor = draggercolour.CGColor;
-    self.Usercircle.layer.borderWidth = 1.5f; //make border 1px thick
-    self.Usercircle.layer.shadowColor = draggercolour.CGColor;
-    self.Usercircle.layer.shadowOffset = CGSizeZero;
-    self.Usercircle.layer.shadowRadius = 1.0;
-    self.Usercircle.layer.shadowOpacity = 1.0;
+    [self updateJellyAppLayerView:self.Usercircle withBorderColor:draggercolour borderWidth:1.5f shadowColor:draggercolour shadowOffset:CGSizeZero shadowRadius:1.0 shadowOpacity:1.0];
+
     self.jellyApps[0].layer.contents = (__bridge id) [[UIImage _applicationIconImageForBundleIdentifier:self.app1
                                                                                               format:2 scale:3] CGImage];
     self.jellyApps[1].layer.contents = (__bridge id) [[UIImage _applicationIconImageForBundleIdentifier:self.app2
