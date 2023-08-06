@@ -1,18 +1,14 @@
 
 
 #import "jellylock.h"
-
+// bugs: does not open app after passcode
+// allow selecting empty app when disabled from settings
 @implementation JellylockView
 float origPos = 10;
 int currentlySelected = -1;
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
-    //jelly apps should be a dict. key: self.app value: the view itself. should save us ton of code
-    self.app1 = [[NSString alloc] init];
-    self.app2 = [[NSString alloc] init];
-    self.app3 = [[NSString alloc] init];
-    self.app4 = [[NSString alloc] init];
-    self.app5 = [[NSString alloc] init];
+    self.appsBundles = [NSMutableArray array];
     if (self) {
         [self setupViews];
     }
@@ -264,36 +260,6 @@ int currentlySelected = -1;
         self.jellyApps[5].layer.cornerRadius = 26;
         
         CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)showCSQuickactionsFromJelly, nil, nil, true);
-        if (currentlySelected == 0) {
-            [[UIApplication sharedApplication] launchApplicationWithIdentifier:self.app1 suspended:FALSE];
-            CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)OpenAppFromJelly, nil, nil, true);
-            openAppBundleid = self.app1;
-        }
-        
-        if (currentlySelected == 1) {
-            [[UIApplication sharedApplication] launchApplicationWithIdentifier:self.app2 suspended:FALSE];
-            CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)OpenAppFromJelly, nil, nil, true);
-            openAppBundleid = self.app2;
-        }
-        
-        if (currentlySelected == 2) {
-            [[UIApplication sharedApplication] launchApplicationWithIdentifier:self.app3 suspended:FALSE];
-            CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)OpenAppFromJelly, nil, nil, true);
-            openAppBundleid = self.app3;
-        }
-        
-        if (currentlySelected == 3) {
-            [[UIApplication sharedApplication] launchApplicationWithIdentifier:self.app4 suspended:FALSE];
-            CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)OpenAppFromJelly, nil, nil, true);
-            openAppBundleid = self.app4;
-        }
-        
-        if (currentlySelected == 4) {
-            [[UIApplication sharedApplication] launchApplicationWithIdentifier:self.app5 suspended:FALSE];
-            CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)OpenAppFromJelly, nil, nil, true);
-            openAppBundleid = self.app5;
-        }
-        
         if (currentlySelected == 5) {
             switch ((int)leftshortcut) {
                 case 1:
@@ -318,9 +284,7 @@ int currentlySelected = -1;
                     CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)StartSentinel, nil, nil, true);
                     break;
             }
-        }
-        
-        if (currentlySelected == 6) {
+        } else if (currentlySelected == 6) {
             switch ((int)rightshortcut) {
                 case 1:
                     if([[objc_getClass("SBUIFlashlightController") sharedInstance] level] == 0){
@@ -344,6 +308,9 @@ int currentlySelected = -1;
                     CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)StartSentinel, nil, nil, true);
                     break;
             }
+        } else if (currentlySelected >= 0) {
+            [[UIApplication sharedApplication] launchApplicationWithIdentifier:self.appsBundles[currentlySelected] suspended:FALSE];
+            CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)OpenAppFromJelly, nil, nil, true);
         }
         
         self.jellyBackDrop.hidden = YES;
@@ -361,7 +328,6 @@ int currentlySelected = -1;
 }
 
 - (void)resetJelly {
-    
     UIColor *draggercolour = [self colorWithHexString:draggerColor alpha:1];
     CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), (CFStringRef)showCSQuickactionsFromJelly, nil, nil, true);
     self.jellycontainer.hidden = YES;
@@ -383,37 +349,15 @@ int currentlySelected = -1;
     UIColor *draggercolour = [self colorWithHexString:draggerColor alpha:1];
     [self updateJellyAppLayerView:self.Usercircle withBorderColor:draggercolour borderWidth:1.5f shadowColor:draggercolour shadowOffset:CGSizeZero shadowRadius:1.0 shadowOpacity:1.0];
 
-    self.jellyApps[0].layer.contents = (__bridge id) [[UIImage _applicationIconImageForBundleIdentifier:self.app1
-                                                                                              format:2 scale:3] CGImage];
-    self.jellyApps[1].layer.contents = (__bridge id) [[UIImage _applicationIconImageForBundleIdentifier:self.app2
-                                                                                              format:2 scale:3] CGImage];
-    self.jellyApps[2].layer.contents = (__bridge id) [[UIImage _applicationIconImageForBundleIdentifier:self.app3
-                                                                                              format:2 scale:3] CGImage];
-    self.jellyApps[3].layer.contents = (__bridge id) [[UIImage _applicationIconImageForBundleIdentifier:self.app4
-                                                                                              format:2 scale:3] CGImage];
-    self.jellyApps[4].layer.contents = (__bridge id) [[UIImage _applicationIconImageForBundleIdentifier:self.app5
-                                                                                              format:2 scale:3] CGImage];
-    
-    if([self.app5 length] == 0){
-        [self.jellyApps[4] removeFromSuperview];
+    // for jellyapps count
+    for (int i=0; i < self.appsBundles.count; i++) {
+        self.jellyApps[i].layer.contents = (__bridge id)[[UIImage _applicationIconImageForBundleIdentifier:self.appsBundles[i] format:2 scale:3] CGImage];
+
+        if ([self.appsBundles[i] length] == 0) {
+            [self.jellyApps[i] removeFromSuperview];
+        }
     }
-    
-    if([self.app4 length] == 0){
-        [self.jellyApps[3] removeFromSuperview];
-    }
-    
-    if([self.app3 length] == 0){
-        [self.jellyApps[2] removeFromSuperview];
-    }
-    
-    if([self.app2 length] == 0){
-        [self.jellyApps[1] removeFromSuperview];
-    }
-    
-    if([self.app1 length] == 0){
-        [self.jellyApps[0] removeFromSuperview];
-    }
-    
+
     switch ((int)leftshortcut) {
         case 1:
             self.jellyApps[5].layer.contents = (__bridge id) [[UIImage imageWithContentsOfFile:@"Library/Application Support/JellyLockReborn/flashlight.png"] CGImage];

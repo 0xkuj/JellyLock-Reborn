@@ -18,23 +18,7 @@ BOOL hideQuickactions;
     appsarray = [appsarray arrayByAddingObjectsFromArray:[SparkAppList getAppListForIdentifier:@"com.megadev.jellylockreborn" andKey:@"app5"]];
     /* Insert apps in view */
     for (int i = 0; i < [appsarray count]; i++) {
-        switch(i){
-            case 0:
-                self.JellyLock.app1 = [appsarray objectAtIndex:0];
-                break;
-            case 1:
-                self.JellyLock.app2 = [appsarray objectAtIndex:1];
-                break;
-            case 2:
-                self.JellyLock.app3 = [appsarray objectAtIndex:2];
-                break;
-            case 3:
-                self.JellyLock.app4 = [appsarray objectAtIndex:3];
-                break;
-            case 4:
-                self.JellyLock.app5 = [appsarray objectAtIndex:4];
-                break;
-        }
+        self.JellyLock.appsBundles[i] = [appsarray objectAtIndex:i];
     }
     
     /* Position view */
